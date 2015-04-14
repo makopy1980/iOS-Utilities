@@ -25,7 +25,8 @@
     
     NSString *urlStr = [NSString stringWithFormat:@"maps://search?q=%@", query];
     
-    return [NSURL URLWithString:urlStr];
+    return [NSURL URLWithString:
+            [urlStr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
 }
 
 
