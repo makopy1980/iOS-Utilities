@@ -41,4 +41,5 @@ typedef enum {
 #pragma mark - etc...
 - (BOOL) hasRetinaDisplay;
 - (NSString *) macAddress;
+
 @end
