@@ -11,7 +11,6 @@
     id lastObject = [self lastObject];
     
     if (lastObject != nil) {
-        
         [self removeLastObject];
     }
     
@@ -20,7 +19,9 @@
 
 - (void)push:(id)anObject {
     
-    [self addObject:anObject];
+    if (anObject != nil) {
+        [self addObject:anObject];
+    }
 }
 
 
