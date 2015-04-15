@@ -6,12 +6,17 @@
 
 @implementation UIImage (Ex)
 
+#pragma mark - Generate UIImage
+
 + (UIImage *)imageFromView:(UIView *)view {
     
-    UIGraphicsBeginImageContextWithOptions(view.bounds.size, NO, 0.0f);
+    UIImage *image;
+    
+    //UIGraphicsBeginImageContext(view.frame.size);
+    UIGraphicsBeginImageContextWithOptions(view.frame.size, NO, 0.0f);
     CGContextRef context = UIGraphicsGetCurrentContext();
     [view.layer renderInContext:context];
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
     return image;
@@ -19,9 +24,7 @@
 
 + (UIImage *)imageFromWindow:(UIWindow *)window {
     
-    if (window == nil) {
-        return nil;
-    }
+    UIImage *image;
     
     UIGraphicsBeginImageContextWithOptions(window.bounds.size, NO, 0.0f);
     CGContextRef context = UIGraphicsGetCurrentContext();
@@ -30,7 +33,7 @@
         [aWindow.layer renderInContext:context];
     }
     
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
     return image;
@@ -41,6 +44,23 @@
     UIWindow *window = [[UIApplication sharedApplication] keyWindow];
     
     return [self imageFromWindow:window];
+}
+
+#pragma mark - Generate CGImageRef
+
++ (CGImageRef)CGImageFromView:(UIView *)view {
+    
+    return [[self imageFromView:view] CGImage];
+}
+
++ (CGImageRef)CGImageFromWindow:(UIWindow *)window {
+    
+    return [[self imageFromWindow:window] CGImage];
+}
+
++ (CGImageRef)CGImageFromKeyWindow {
+    
+    return [[self imageFromKeyWindow] CGImage];
 }
 
 @end
