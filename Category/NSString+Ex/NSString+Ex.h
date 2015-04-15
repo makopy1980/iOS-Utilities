@@ -4,9 +4,13 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSString (Ex)
+@interface  NSString (Ex)
 
-- (NSUInteger)realLength;
+#pragma mark - Check String
 - (BOOL)isWhiteSpaceOnly;
+- (BOOL)canConvertToInt;
+- (BOOL)canConvertToInteger;
+#pragma mark - Length
+- (NSUInteger)realLength;
 
 @end
