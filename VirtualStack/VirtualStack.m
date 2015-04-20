@@ -63,7 +63,7 @@
 
 #pragma mark - debugDescription
 
-- (NSString *)description {
+- (NSString *)debugDescription {
     
     NSMutableString *description = [[NSMutableString alloc] init];
     [description appendString:@"\n===== Stack description =====\n"];
