@@ -48,7 +48,7 @@
              return nil;
          }
          
-         id headObject = [queue objectAtIndex:0];
+         headObject = [queue objectAtIndex:0];
          
          if (headObject != nil) {
              [queue removeObjectAtIndex:0];
