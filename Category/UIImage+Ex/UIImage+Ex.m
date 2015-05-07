@@ -3,7 +3,6 @@
 //
 
 #import "UIImage+Ex.h"
-#import <AVFoundation/AVFoundation.h>
 
 @implementation UIImage (Ex)
 
