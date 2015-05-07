@@ -3,6 +3,7 @@
 //
 
 #import "UIImage+Ex.h"
+#import <AVFoundation/AVFoundation.h>
 
 @implementation UIImage (Ex)
 
@@ -22,9 +23,10 @@
     return image;
 }
 
-+ (UIImage *)imageFromWindow:(UIWindow *)window {
++ (UIImage *)imageFromWindow {
     
     UIImage *image;
+    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
     
     UIGraphicsBeginImageContextWithOptions(window.bounds.size, NO, 0.0f);
     CGContextRef context = UIGraphicsGetCurrentContext();
@@ -39,13 +41,6 @@
     return image;
 }
 
-+ (UIImage *)imageFromKeyWindow {
-    
-    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
-    
-    return [self imageFromWindow:window];
-}
-
 #pragma mark - Generate CGImageRef
 
 + (CGImageRef)CGImageFromView:(UIView *)view {
@@ -53,14 +48,80 @@
     return [[self imageFromView:view] CGImage];
 }
 
-+ (CGImageRef)CGImageFromWindow:(UIWindow *)window {
++ (CGImageRef)CGImageFromWindow {
     
-    return [[self imageFromWindow:window] CGImage];
+    return [[self imageFromWindow] CGImage];
 }
 
-+ (CGImageRef)CGImageFromKeyWindow {
+#pragma mark - Generate CVPixelBufferRef
+
++ (CVPixelBufferRef)pixelBufferForH264FromView:(UIView *)view {
     
-    return [[self imageFromKeyWindow] CGImage];
+    CGSize size = view.bounds.size;
+    
+    CVPixelBufferRef pxbuffer = NULL;
+    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+                             @YES, kCVPixelBufferCGImageCompatibilityKey,
+                             @YES, kCVPixelBufferCGBitmapContextCompatibilityKey,
+                             nil];
+    CVPixelBufferCreate(kCFAllocatorDefault, size.width, size.height, kCVPixelFormatType_32ARGB,
+                        (__bridge CFDictionaryRef)options, &pxbuffer);
+    
+    CVPixelBufferLockBaseAddress(pxbuffer, 0);
+    
+    void *pxdata = CVPixelBufferGetBaseAddress(pxbuffer);
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef context = CGBitmapContextCreate(pxdata, size.width, size.height, 8, 4 * size.width,
+                                                 colorSpace, (CGBitmapInfo)kCGImageAlphaNoneSkipFirst);
+    
+    CGContextTranslateCTM(context, 0, size.height);
+    CGContextScaleCTM(context, 1.0, -1.0);
+    
+    [view.layer renderInContext:context];
+    
+    CGColorSpaceRelease(colorSpace);
+    CGContextRelease(context);
+    
+    CVPixelBufferUnlockBaseAddress(pxbuffer, 0);
+    
+    return pxbuffer;
+}
+
++ (CVPixelBufferRef)pixelBufferForH264FromWindow {
+    
+    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+    CGSize size = window.bounds.size;
+    
+    CVPixelBufferRef pxbuffer = NULL;
+    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+                             @YES, kCVPixelBufferCGImageCompatibilityKey,
+                             @YES, kCVPixelBufferCGBitmapContextCompatibilityKey,
+                             nil];
+    CVPixelBufferCreate(kCFAllocatorDefault, size.width, size.height, kCVPixelFormatType_32ARGB,
+                        (__bridge CFDictionaryRef)options, &pxbuffer);
+    
+    CVPixelBufferLockBaseAddress(pxbuffer, 0);
+    
+    void *pxdata = CVPixelBufferGetBaseAddress(pxbuffer);
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef context = CGBitmapContextCreate(pxdata, size.width, size.height, 8, 4 * size.width,
+                                                 colorSpace, (CGBitmapInfo)kCGImageAlphaNoneSkipFirst);
+    
+    CGContextTranslateCTM(context, 0, size.height);
+    CGContextScaleCTM(context, 1.0, -1.0);
+    
+    for (UIWindow *aWindow in [[UIApplication sharedApplication] windows]) {
+        [aWindow.layer renderInContext:context];
+    }
+    
+    CGColorSpaceRelease(colorSpace);
+    CGContextRelease(context);
+    
+    CVPixelBufferUnlockBaseAddress(pxbuffer, 0);
+    
+    return pxbuffer;
 }
 
 @end
